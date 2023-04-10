@@ -1,0 +1,98 @@
+[3/30 7:57 PM] Harshal Suri (EXT)
+
+
+
+
+---
+
+apiVersion: networking.k8s.io/v1
+
+kind: Ingress
+
+metadata:
+
+  namespace: dot
+
+  name: transactions-dot-ingress
+
+  annotations:
+
+    alb.ingress.kubernetes.io/load-balancer-name: transactions-dot-ingress-alb
+
+    kubernetes.io/ingress.class: alb
+
+    alb.ingress.kubernetes.io/scheme: internal
+
+    alb.ingress.kubernetes.io/target-type: instance/ip
+
+    alb.ingress.kubernetes.io/subnets: mention subnets
+
+    alb.ingress.kubernetes.io/certificate-arn: arn:aws:acm:us-west-2:607050717691:certificate/fd12803f-0d33-495a-91e4-ed2453ca5421
+
+    alb.ingress.kubernetes.io/tags: Owner=ecommerce@lucidmotors.com,CostCenter=ecommerce,Environment=dev
+
+    #alb.ingress.kubernetes.io/group.name:
+
+    alb.ingress.kubernetes.io/listenports: '[{"HTTPS": 443}]'
+
+    alb.ingress.kubernetes.io/ssl-ports: https
+
+    alb.ingress.kubernetes.io/ssl-policy: ELBSecurityPolicy-2016-08
+
+    #Configure health-checks for ALB:
+
+    alb.ingress.kubernetes.io/healthcheck-protocol: HTTP
+
+    alb.ingress.kubernetes.io/success-codes: "200"
+
+    alb.ingress.kubernetes.io/unhealthy-threshold-count: "2"
+
+    alb.ingress.kubernetes.io/healthcheck-port: traffic-port
+
+    alb.ingress.kubernetes.io/healthy-threshold-count: "2"
+
+    alb.ingress.kubernetes.io/healthcheck-timeout-seconds: "5"
+
+    alb.ingress.kubernetes.io/healthcheck-interval-seconds: "15"
+
+    #alb.ingress.kubernetes.io/ssl-redirect:
+
+spec:
+
+  rules:
+
+    - host: transactions.dot.dev.lucidgroup.com
+
+      http:
+
+        paths:
+
+          - path: /quote-service/*
+
+            pathType: ImplementationSpecific
+
+            backend:
+
+              service:
+
+                name: lucid-tax-service
+
+                port:
+
+                  number: 8080
+
+          - path: /signature-service/*
+
+            pathType: ImplementationSpecific
+
+            backend:
+
+              service:
+
+                name: signature-service
+
+                port:
+
+                  number: 8080
+
+
